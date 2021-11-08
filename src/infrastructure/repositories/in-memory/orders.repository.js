@@ -2,7 +2,7 @@
 
 const { v4: uuidv4 } = require('uuid');
 
-const { inMemorydb } = require('../../database');
+const { inMemorydb } = require('../../databases');
 const { OrderMap } = require('../../../common/mappers');
 
 module.exports = class OrderRepository {
