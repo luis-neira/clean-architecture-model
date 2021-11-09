@@ -1,3 +1,3 @@
 module.exports = {
-  RepositoriesConfig: require('./in-memory/in-memory-repos.config')
+  RepositoriesConfig: require('./repositories.config')
 };
