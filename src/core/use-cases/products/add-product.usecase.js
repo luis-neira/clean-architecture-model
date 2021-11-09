@@ -2,9 +2,12 @@
 
 const { Result } = require('../../lib/result');
 const { Product } = require('../../entities');
-const { BaseUseCase } = require('./base.usecase');
 
-module.exports = class AddProductUseCase extends BaseUseCase {
+module.exports = class AddProductUseCase {
+  constructor(dbRepository) {
+    this.productRepository = dbRepository.productsRepository;
+  }
+
   async execute({ name, description, images, price, color, meta }) {
     const product = Product.create({
       name,

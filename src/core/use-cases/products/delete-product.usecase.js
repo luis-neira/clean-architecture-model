@@ -1,17 +1,20 @@
 'use strict';
 
 const { Result } = require('../../lib/result');
-const { BaseUseCase } = require('./base.usecase');
 const { ValueNotFoundError } = require('../../../common/errors');
 
-module.exports = class DeleteProductUseCase extends BaseUseCase {
-  async execute(request) {
+module.exports = class DeleteProductUseCase {
+  constructor(dbRepository) {
+    this.productRepository = dbRepository.productsRepository;
+  }
+
+  async execute(product) {
     try {
-      const persistedProduct = await this.productRepository.delete(request);
+      const persistedProduct = await this.productRepository.delete(product);
 
       if (persistedProduct === null) {
         return Result.fail(
-          new ValueNotFoundError(`Couldn't find product by id=${request.id}`)
+          new ValueNotFoundError(`Couldn't find product by id=${product.id}`)
         );
       }
 
