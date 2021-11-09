@@ -27,7 +27,7 @@ const {
 } = require('./config/web/app');
 
 module.exports = function main(expressOpts) {
-  const db = RepositoriesConfig.getInMemoryRepos();
+  const db = RepositoriesConfig.getRepos(process.env.NODE_ENV);
 
   const usersUseCases = UsersUseCasesConfig.getAllUseCases(db);
   const productsUseCases = ProductsUseCasesConfig.getAllUseCases(db);
