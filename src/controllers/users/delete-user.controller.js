@@ -1,6 +1,6 @@
 'use strict';
 
-const { BaseController } = require('../base.controller');
+const { BaseController } = require('../controller');
 
 module.exports = class DeleteUserController extends BaseController {
   async processRequest(req, res, next) {

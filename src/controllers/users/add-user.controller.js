@@ -1,6 +1,6 @@
 'use strict';
 
-const { BaseController } = require('../base.controller');
+const { BaseController } = require('../controller');
 const { SuccessResponse } = require('../../common/contracts');
 const { UserMap } = require('../../common/mappers');
 
