@@ -1,10 +1,13 @@
 'use strict';
 
 const { Result } = require('../../lib/result');
-const { BaseUseCase } = require('./base.usecase');
 const { ValueNotFoundError } = require('../../../common/errors');
 
-module.exports = class GetOrderByIdUseCase extends BaseUseCase {
+module.exports = class GetOrderByIdUseCase {
+  constructor(dbRepository) {
+    this.ordersRepository = dbRepository.ordersRepository;
+  }
+
   async execute({ id }) {
     try {
       const persistedOrder = await this.ordersRepository.getById(id);

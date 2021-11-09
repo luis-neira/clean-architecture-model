@@ -1,17 +1,16 @@
 'use strict';
 
 const { Result } = require('../../lib/result');
-const { BaseUseCase } = require('./base.usecase');
 const { Order } = require('../../entities');
 
 const { ValidationError } = require('../../../common/errors');
 
-module.exports = class AddOrderUseCase extends BaseUseCase {
+module.exports = class AddOrderUseCase {
   usersRepository;
   productsRepository;
 
   constructor(dbRepository) {
-    super(dbRepository);
+    this.ordersRepository = dbRepository.ordersRepository;
     this.usersRepository = dbRepository.usersRepository;
     this.productsRepository = dbRepository.productsRepository;
   }
