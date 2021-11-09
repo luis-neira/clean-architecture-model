@@ -1,11 +1,13 @@
 'use strict';
 
 const { Result } = require('../../lib/result');
-const { BaseUseCase } = require('./base.usecase');
 const { ValueNotFoundError } = require('../../../common/errors');
-const { UserMap } = require('../../../common/mappers');
 
-module.exports = class GetUserByIdUseCase extends BaseUseCase {
+module.exports = class GetUserByIdUseCase {
+  constructor(dbRepository) {
+    this.usersRepository = dbRepository.usersRepository;
+  }
+
   async execute({ id }) {
     try {
       const foundUser = await this.usersRepository.getById(id);
@@ -16,7 +18,7 @@ module.exports = class GetUserByIdUseCase extends BaseUseCase {
         );
       }
 
-      return Result.ok(UserMap.toDomain(foundUser));
+      return Result.ok(foundUser);
     } catch (err) {
       return Result.fail(err);
     }

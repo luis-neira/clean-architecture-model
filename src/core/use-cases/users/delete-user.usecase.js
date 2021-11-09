@@ -1,10 +1,13 @@
 'use strict';
 
 const { Result } = require('../../lib/result');
-const { BaseUseCase } = require('./base.usecase');
 const { ValueNotFoundError } = require('../../../common/errors');
 
-module.exports = class DeleteUserUseCase extends BaseUseCase {
+module.exports = class DeleteUserUseCase {
+  constructor(dbRepository) {
+    this.usersRepository = dbRepository.usersRepository;
+  }
+
   async execute({ user }) {
     try {
       const deletedUser = await this.usersRepository.delete(user);

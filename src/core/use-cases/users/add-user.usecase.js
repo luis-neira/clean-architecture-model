@@ -2,10 +2,13 @@
 
 const { Result } = require('../../lib/result');
 const { User } = require('../../entities');
-const { BaseUseCase } = require('./base.usecase');
 const { Gender, LastName, Name } = require('../../value-objects/user');
 
-module.exports = class AddUserUseCase extends BaseUseCase {
+module.exports = class AddUserUseCase {
+  constructor(dbRepository) {
+    this.usersRepository = dbRepository.usersRepository;
+  }
+
   async execute({ name, lastName, gender, meta }) {
     const nameOrError = Name.create(name);
     const lastNameOrError = LastName.create(lastName);
