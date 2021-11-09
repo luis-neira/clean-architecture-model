@@ -12,7 +12,7 @@ module.exports = class ExpressApp {
   _appInitialized = false;
   _routers;
 
-  constructor(routers, options = {}) {
+  constructor(routers = [], options = {}) {
     this._app = express();
     this._options = options;
     this._routers = routers;

@@ -24,7 +24,7 @@ module.exports = class Http_Server {
 
   _setErrorHandler() {
     this._server.on('error', (err) => {
-      console.error(err);
+      logger.error(err);
       process.exit(1);
     });
   }
