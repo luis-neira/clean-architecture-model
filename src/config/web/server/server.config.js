@@ -1,13 +1,9 @@
 'use strict';
 
-const util = require('util');
-
 const { createTerminus } = require('@godaddy/terminus');
 
 const DatabaseClient = require('../../../infrastructure/database/db-client');
 const logger = require('../../../common/logger');
-
-const sleep = util.promisify(setTimeout);
 
 module.exports = class ServerConfig {
   constructor(server) {
@@ -23,8 +19,6 @@ module.exports = class ServerConfig {
     logger.info('All server connections: Closed');
 
     await DatabaseClient.closeConnections(process.env.DB_DIALECT);
-    await sleep(5000);
-
     return;
   }
 
