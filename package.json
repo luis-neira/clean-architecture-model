@@ -2,10 +2,10 @@
   "name": "clean-architecture-model",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
-    "dev": "NODE_ENV=development nodemon -r dotenv/config index.js | pino-pretty",
-    "start": "PORT=3000 node -r dotenv/config index.js"
+    "dev": "NODE_ENV=development nodemon -r dotenv/config main.js | pino-pretty",
+    "start": "PORT=3000 node -r dotenv/config main.js"
   },
   "keywords": [],
   "author": "",
@@ -14,8 +14,11 @@
     "@godaddy/terminus": "^4.9.0",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "make-promises-safe": "^5.1.0",
+    "mariadb": "^2.5.5",
     "pino": "^7.1.0",
     "pino-http": "^6.0.0",
+    "sequelize": "^6.9.0",
     "shallow-equal-object": "^1.1.1",
     "uuid": "^8.3.2"
   },

@@ -1,19 +1,26 @@
 'use strict';
 
-const {
-  InMemoryReposConfig
-} = require('./in-memory/in-memory-repos.config');
-
 module.exports = class RepositoriesConfig {
   static getInMemoryRepos() {
+    const { InMemoryReposConfig } = require('./in-memory');
+
     return InMemoryReposConfig.getAllRepos();
   }
 
-  static getRepos(name) {
+  static getMariadbRepos() {
+    const { MariadbReposConfig } = require('./mariadb');
+
+    return MariadbReposConfig.getAllRepos();
+  }
+
+  static selectRepos(dbDialect) {
     const reposLookup = {
-      development: RepositoriesConfig.getInMemoryRepos()
+      inMemory: RepositoriesConfig.getInMemoryRepos,
+      mariadb: RepositoriesConfig.getMariadbRepos
     };
 
-    return reposLookup[name] || RepositoriesConfig.getInMemoryRepos();
+    const getRepos = reposLookup[dbDialect];
+
+    return getRepos() || RepositoriesConfig.getInMemoryRepos();
   }
 };

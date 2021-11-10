@@ -2,7 +2,7 @@
 
 const { v4: uuidv4 } = require('uuid');
 
-const { inMemorydb } = require('../../databases');
+const { inMemorydb } = require('../../orm/in-memory');
 const { UserMap } = require('../../../common/mappers');
 
 module.exports = class UserRepository {

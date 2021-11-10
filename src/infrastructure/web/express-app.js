@@ -4,6 +4,7 @@ const express = require('express');
 const pinoHttp = require('./middlewares/vendors/pino-http');
 
 const errorHandler = require('./middlewares/error-handler');
+const errorLogger = require('./middlewares/error-logger');
 const notFoundHandler = require('./middlewares/not-found-handler');
 
 module.exports = class ExpressApp {
@@ -50,6 +51,7 @@ module.exports = class ExpressApp {
 
   _setErrorHander() {
     this._app.use(notFoundHandler);
+    this._app.use(errorLogger);
     this._app.use(errorHandler);
   }
 };

@@ -2,11 +2,11 @@
 
 const {
   UsersRepository,
-  OrdersRepository,
-  ProductsRepository
-} = require('../../../infrastructure/repositories/in-memory');
+  ProductsRepository,
+  OrdersRepository
+} = require('../../../infrastructure/repositories/mariadb');
 
-module.exports = class InMemoryReposConfig {
+module.exports = class MariadbReposConfig {
   static getAllRepos() {
     return {
       usersRepository: new UsersRepository(),

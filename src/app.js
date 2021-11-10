@@ -26,12 +26,13 @@ const {
   WebAppConfig
 } = require('./config/web/app');
 
-module.exports = function main(expressOpts) {
-  const db = RepositoriesConfig.getRepos(process.env.DB_REPO);
+module.exports = function initApp(dbDialect) {
 
-  const usersUseCases = UsersUseCasesConfig.getAllUseCases(db);
-  const productsUseCases = ProductsUseCasesConfig.getAllUseCases(db);
-  const ordersUseCases = OrdersUseCasesConfig.getAllUseCases(db);
+  const repos = RepositoriesConfig.selectRepos(dbDialect);
+
+  const usersUseCases = UsersUseCasesConfig.getAllUseCases(repos);
+  const productsUseCases = ProductsUseCasesConfig.getAllUseCases(repos);
+  const ordersUseCases = OrdersUseCasesConfig.getAllUseCases(repos);
 
   const usersControllers = UsersControllersConfig.getAllControllers(usersUseCases);
   const productsControllers = ProductsControllersConfig.getAllControllers(productsUseCases);
@@ -47,7 +48,7 @@ module.exports = function main(expressOpts) {
     ordersRouter
   ];
 
-  const expressApp = WebAppConfig.getExpressApp(routers, expressOpts);
+  const expressApp = WebAppConfig.getExpressApp(routers, {});
 
   return expressApp.build();
 };

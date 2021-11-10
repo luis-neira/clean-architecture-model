@@ -2,7 +2,7 @@
 
 const { createServer } = require('http');
 
-const serverConfig = require('../../config/web/server');
+const ServerConfig = require('../../config/web/server/server.config');
 const logger = require('../../common/logger');
 
 module.exports = class Http_Server {
@@ -19,7 +19,8 @@ module.exports = class Http_Server {
   }
 
   _setConfig() {
-    this._server = serverConfig(this._initServer);
+    const serverConfig = new ServerConfig(this._initServer);
+    this._server = serverConfig.configure()
   }
 
   _setErrorHandler() {
