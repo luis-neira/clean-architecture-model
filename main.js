@@ -14,7 +14,9 @@ class Main {
 
     const app = new App(databaseClient.getDialect());
 
-    const server = HttpServer.create(app.init());
+    const server = new HttpServer(app.init());
+
+    server.configure();
 
     server.listen(process.env.PORT || 3000);
   }

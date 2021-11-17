@@ -8,9 +8,10 @@ const logger = require('../../../common/logger');
 class ServerConfig {
   constructor(server) {
     this.server = server;
+    Object.freeze(this);
   }
 
-  configure() {
+  process() {
     return createTerminus(this.server, {
       logger: (msg, err) => {
         logger.error({ err }, msg);
@@ -34,9 +35,7 @@ async function beforeShutdown() {
 
 async function onSignal() {
   logger.info('All server connections: Closed');
-
   const databaseClient = DatabaseClient.getInstance();
-
   await databaseClient.close();
   return;
 }

@@ -1,40 +1,36 @@
 'use strict';
 
-const { createServer } = require('http');
+const { Server } = require('http');
 
 const ServerConfig = require('../../config/web/server/server.config');
 const logger = require('../../common/logger');
 
-module.exports = class HttpServer {
-  constructor(webApp) {
-    this._initServer = createServer(webApp);
-    this._setConfig();
-    this._setErrorHandler();
-    this._setListener();
+class HttpServer extends Server {
+  configure() {
+    setConfig(this);
+    setErrorHandler(this);
+    setListeningHandler(this);
   }
+}
 
-  static create(webApp) {
-    const init = new HttpServer(webApp);
-    return init._server;
-  }
+function setConfig(server) {
+  const serverConfig = new ServerConfig(server);
+  serverConfig.process();
+}
 
-  _setConfig() {
-    const serverConfig = new ServerConfig(this._initServer);
-    this._server = serverConfig.configure()
-  }
+function setErrorHandler(server) {
+  server.on('error', (err) => {
+    logger.error(err);
+    process.exit(1);
+  });
+}
 
-  _setErrorHandler() {
-    this._server.on('error', (err) => {
-      logger.error(err);
-      process.exit(1);
-    });
-  }
+function setListeningHandler(server) {
+  server.on('listening', () => {
+    logger.info(
+      `Server up & running at http://localhost:${server.address().port}`
+    );
+  });
+}
 
-  _setListener() {
-    this._server.on('listening', () => {
-      logger.info(
-        `Server up & running at http://localhost:${this._server.address().port}`
-      );
-    });
-  }
-};
+module.exports = HttpServer;
