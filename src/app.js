@@ -1,8 +1,6 @@
 'use strict';
 
-const {
-  RepositoriesConfig
-} = require('./config/repositories');
+const { RepositoriesConfig } = require('./config/repositories');
 
 const {
   UsersUseCasesConfig,
@@ -22,33 +20,45 @@ const {
   OrdersRouterConfig
 } = require('./config/web/routers');
 
-const {
-  WebAppConfig
-} = require('./config/web/app');
+const { WebAppConfig } = require('./config/web/app');
 
-module.exports = function initApp(dbDialect) {
+const App = (function () {
+  let dbDialect;
 
-  const repos = RepositoriesConfig.selectRepos(dbDialect);
+  class App {
+    constructor(databaseDialect) {
+      dbDialect = databaseDialect;
+      Object.freeze(this);
+    }
 
-  const usersUseCases = UsersUseCasesConfig.getAllUseCases(repos);
-  const productsUseCases = ProductsUseCasesConfig.getAllUseCases(repos);
-  const ordersUseCases = OrdersUseCasesConfig.getAllUseCases(repos);
+    init() {
+      const repos = RepositoriesConfig.selectRepos(dbDialect);
 
-  const usersControllers = UsersControllersConfig.getAllControllers(usersUseCases);
-  const productsControllers = ProductsControllersConfig.getAllControllers(productsUseCases);
-  const ordersControllers = OrdersControllersConfig.getAllControllers(ordersUseCases);
+      const usersUseCases = UsersUseCasesConfig.getAllUseCases(repos);
+      const productsUseCases = ProductsUseCasesConfig.getAllUseCases(repos);
+      const ordersUseCases = OrdersUseCasesConfig.getAllUseCases(repos);
 
-  const usersRouter = UsersRouterConfig.getUsersRouter(usersControllers);
-  const productsRouter = ProductsRouterConfig.getProductsRouter(productsControllers);
-  const ordersRouter = OrdersRouterConfig.getOrdersRouter(ordersControllers);
+      const usersControllers = UsersControllersConfig.getAllControllers(usersUseCases);
+      const productsControllers = ProductsControllersConfig.getAllControllers(productsUseCases);
+      const ordersControllers = OrdersControllersConfig.getAllControllers(ordersUseCases);
 
-  const routers = [
-    usersRouter,
-    productsRouter,
-    ordersRouter
-  ];
+      const usersRouter = UsersRouterConfig.getUsersRouter(usersControllers);
+      const productsRouter = ProductsRouterConfig.getProductsRouter(productsControllers);
+      const ordersRouter = OrdersRouterConfig.getOrdersRouter(ordersControllers);
 
-  const expressApp = WebAppConfig.getExpressApp(routers, {});
+      const routers = [
+        usersRouter,
+        productsRouter,
+        ordersRouter
+      ];
 
-  return expressApp.build();
-};
+      const expressApp = WebAppConfig.getExpressApp(routers, {});
+
+      return expressApp.build();
+    }
+  }
+
+  return App;
+})();
+
+module.exports = App;

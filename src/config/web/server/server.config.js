@@ -18,7 +18,9 @@ module.exports = class ServerConfig {
   async onSignal() {
     logger.info('All server connections: Closed');
 
-    await DatabaseClient.closeConnections(process.env.DB_DIALECT);
+    const databaseClient = DatabaseClient.getInstance();
+
+    await databaseClient.close();
     return;
   }
 

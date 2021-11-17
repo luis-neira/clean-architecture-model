@@ -3,20 +3,21 @@
 require('make-promises-safe');
 
 const DatabaseClient = require('./src/infrastructure/database/db-client');
-const Http_Server = require('./src/infrastructure/web/server');
-const initApp = require('./src/app');
+const HttpServer = require('./src/infrastructure/web/server');
+const App = require('./src/app');
 
-const start = async () => {
+class Main {
+  static async run() {
+    const databaseClient = DatabaseClient.getInstance();
 
-  const dbClient = new DatabaseClient(process.env.DB_DIALECT);
+    await databaseClient.connect();
 
-  await dbClient.connect()
+    const app = new App(databaseClient.getDialect());
 
-  const expressApp = initApp(dbClient.dialect);
+    const server = HttpServer.create(app.init());
 
-  const server = Http_Server.create(expressApp);
+    server.listen(process.env.PORT || 3000);
+  }
+}
 
-  server.listen(process.env.PORT || 3000);
-};
-
-start();
+Main.run();

@@ -5,7 +5,7 @@ const { createServer } = require('http');
 const ServerConfig = require('../../config/web/server/server.config');
 const logger = require('../../common/logger');
 
-module.exports = class Http_Server {
+module.exports = class HttpServer {
   constructor(webApp) {
     this._initServer = createServer(webApp);
     this._setConfig();
@@ -14,7 +14,7 @@ module.exports = class Http_Server {
   }
 
   static create(webApp) {
-    const init = new Http_Server(webApp);
+    const init = new HttpServer(webApp);
     return init._server;
   }
 
