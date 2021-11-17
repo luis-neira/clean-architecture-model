@@ -6,9 +6,11 @@ const { initUserModel } = require('./models/User');
 const { initProductModel } = require('./models/Product');
 const { initOrderModel } = require('./models/Order');
 
+const constants = require('../../../config/constants');
+
 const dialectOpts = {};
 
-if (process.env.DB_DIALECT === 'mariadb') {
+if (process.env.DB_DIALECT === constants.dbDialects.MARIA_DB) {
   Object.assign(dialectOpts, { autoJsonMap: false });
 }
 
