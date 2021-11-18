@@ -1,3 +1,1 @@
-module.exports = {
-  MariadbReposConfig: require('./mariadb-repos.config')
-};
+module.exports = require('./mariadb-repos.config');

@@ -1,3 +1,1 @@
-module.exports = {
-  InMemoryReposConfig: require('./in-memory-repos.config')
-};
+module.exports = require('./in-memory-repos.config');

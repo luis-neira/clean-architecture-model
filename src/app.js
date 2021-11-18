@@ -1,58 +1,35 @@
 'use strict';
 
-const { RepositoriesConfig } = require('./config/repositories');
-
-const {
-  UsersUseCasesConfig,
-  ProductsUseCasesConfig,
-  OrdersUseCasesConfig
-} = require('./config/use-cases');
-
-const {
-  UsersControllersConfig,
-  ProductsControllersConfig,
-  OrdersControllersConfig
-} = require('./config/controllers');
-
-const {
-  UsersRouterConfig,
-  ProductsRouterConfig,
-  OrdersRouterConfig
-} = require('./config/web/routers');
-
-const { WebAppConfig } = require('./config/web/app');
+const RepositoriesConfigFactory = require('./config/repositories');
+const UseCasesConfig = require('./config/use-cases');
+const ControllersConfig = require('./config/controllers');
+const RoutersConfig = require('./config/web/routers');
+const WebAppConfig = require('./config/web/app');
 
 const App = (function () {
-  let dbDialect;
+  let _dbDialect;
 
   class App {
-    constructor(databaseDialect) {
-      dbDialect = databaseDialect;
+    constructor(dbDialect) {
+      _dbDialect = dbDialect;
       Object.freeze(this);
     }
 
     init() {
-      const repos = RepositoriesConfig.selectRepos(dbDialect);
+      const repositoriesConfigFactory = new RepositoriesConfigFactory();
+      const reposDictionary = repositoriesConfigFactory.create(_dbDialect);
 
-      const usersUseCases = UsersUseCasesConfig.getAllUseCases(repos);
-      const productsUseCases = ProductsUseCasesConfig.getAllUseCases(repos);
-      const ordersUseCases = OrdersUseCasesConfig.getAllUseCases(repos);
+      const useCasesConfig = new UseCasesConfig(reposDictionary);
+      const useCasesDictionary = useCasesConfig.getUseCases();
 
-      const usersControllers = UsersControllersConfig.getAllControllers(usersUseCases);
-      const productsControllers = ProductsControllersConfig.getAllControllers(productsUseCases);
-      const ordersControllers = OrdersControllersConfig.getAllControllers(ordersUseCases);
+      const controllersConfig = new ControllersConfig(useCasesDictionary);
+      const controllersDictionary = controllersConfig.getControllers();
 
-      const usersRouter = UsersRouterConfig.getUsersRouter(usersControllers);
-      const productsRouter = ProductsRouterConfig.getProductsRouter(productsControllers);
-      const ordersRouter = OrdersRouterConfig.getOrdersRouter(ordersControllers);
+      const routersConfig = new RoutersConfig(controllersDictionary);
+      const routersList = routersConfig.getRouters();
 
-      const routers = [
-        usersRouter,
-        productsRouter,
-        ordersRouter
-      ];
-
-      const expressApp = WebAppConfig.getExpressApp(routers, {});
+      const webAppConfig = new WebAppConfig(routersList, {});
+      const expressApp = webAppConfig.getExpressApp();
 
       return expressApp.build();
     }

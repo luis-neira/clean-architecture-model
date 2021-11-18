@@ -4,8 +4,6 @@ const { HttpError } = require('../common/errors');
 const constants = require('../config/constants');
 
 module.exports.BaseController = class BaseController {
-  useCase;
-
   constructor(useCase) {
     this.useCase = useCase;
   }

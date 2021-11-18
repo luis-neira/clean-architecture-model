@@ -1,38 +1,50 @@
 'use strict';
 
-const Router = require('express').Router;
+const { Router } = require('express');
 
-module.exports.OrdersRouter = class OrdersRouter {
-  constructor(controllers) {
-    this.addOrderController = controllers.addOrderController;
-    this.getOrderByIdController = controllers.getOrderByIdController;
-    this.updateOrderController = controllers.updateOrderController;
-    this.deleteOrderController = controllers.deleteOrderController;
-    this.router = Router();
-    this.configRouter();
+const OrdersRouter = (function () {
+  let _addOrderController = {};
+  let _deleteOrderController = {};
+  let _updateOrderController = {};
+  let _getOrderByIdController = {};
+  
+  let _router = {};
+
+  class OrdersRouter {
+    constructor(controllers) {
+      _addOrderController = controllers.addOrderController;
+      _deleteOrderController = controllers.deleteOrderController;
+      _updateOrderController = controllers.updateOrderController;
+      _getOrderByIdController = controllers.getOrderByIdController;
+      _router = Router();
+      configRouter();
+    }
+
+    getRouter() {
+      return _router;
+    }
   }
 
-  configRouter() {
-    const router = this.router;
-    router.post(
+  function configRouter() {
+    _router.post(
       '/api/v1/orders',
-      this.addOrderController.getRequestHandler()
+      _addOrderController.getRequestHandler()
     );
-    router.get(
+    _router.get(
       '/api/v1/orders/:id',
-      this.getOrderByIdController.getRequestHandler()
+      _getOrderByIdController.getRequestHandler()
     );
-    router.put(
+    _router.put(
       '/api/v1/orders/',
-      this.updateOrderController.getRequestHandler()
+      _updateOrderController.getRequestHandler()
     );
-    router.delete(
+    _router.delete(
       '/api/v1/orders/',
-      this.deleteOrderController.getRequestHandler()
+      _deleteOrderController.getRequestHandler()
     );
   }
 
-  getRouter() {
-    return this.router;
-  }
-};
+  return OrdersRouter;
+})();
+
+module.exports = { OrdersRouter };

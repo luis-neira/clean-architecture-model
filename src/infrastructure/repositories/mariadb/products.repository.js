@@ -3,57 +3,61 @@
 const { sequelize } = require('../../orm/sequelize');
 const { ProductMap } = require('../../../common/mappers');
 
-module.exports = class ProductRepository {
-  constructor() {
-    this._db = sequelize;
-    this.model = this._db.model('Product');
-  }
+const ProductsRepository = (function () {
+  let _db = sequelize;
+  let _model = _db.model('Product');
 
-  async add(product) {
-    const productRawData = ProductMap.toPersistence(product);
+  return class ProductsRepository {
+    constructor() {}
 
-    const addedProduct = await this.model.create(productRawData);
+    async add(product) {
+      const productRawData = ProductMap.toPersistence(product);
 
-    return ProductMap.toDomain(addedProduct.toJSON());
-  }
+      const addedProduct = await _model.create(productRawData);
 
-  async getById(productId) {
-    const foundProduct = await this.model.findOne({
-      where: { id: productId }
-    });
+      return ProductMap.toDomain(addedProduct.toJSON());
+    }
 
-    if (!foundProduct) return null;
+    async getById(productId) {
+      const foundProduct = await _model.findOne({
+        where: { id: productId }
+      });
 
-    return ProductMap.toDomain(foundProduct.toJSON());
-  }
+      if (!foundProduct) return null;
 
-  async update(newRawProductData) {
-    const foundProduct = await this.model.findOne({
-      where: { id: newRawProductData.id }
-    });
+      return ProductMap.toDomain(foundProduct.toJSON());
+    }
 
-    if (!foundProduct) return null;
+    async update(newRawProductData) {
+      const foundProduct = await _model.findOne({
+        where: { id: newRawProductData.id }
+      });
 
-    Reflect.deleteProperty(newRawProductData, 'id');
+      if (!foundProduct) return null;
 
-    foundProduct.set({
-      ...newRawProductData
-    });
+      Reflect.deleteProperty(newRawProductData, 'id');
 
-    await foundProduct.save();
+      foundProduct.set({
+        ...newRawProductData
+      });
 
-    return ProductMap.toDomain(foundProduct.toJSON());
-  }
+      await foundProduct.save();
 
-  async delete(rawProductData) {
-    const foundProduct = await this.model.findOne({
-      where: { id: rawProductData.id }
-    });
+      return ProductMap.toDomain(foundProduct.toJSON());
+    }
 
-    if (!foundProduct) return null;
+    async delete(rawProductData) {
+      const foundProduct = await _model.findOne({
+        where: { id: rawProductData.id }
+      });
 
-    await foundProduct.destroy();
+      if (!foundProduct) return null;
 
-    return ProductMap.toDomain(foundProduct.toJSON());
-  }
-};
+      await foundProduct.destroy();
+
+      return ProductMap.toDomain(foundProduct.toJSON());
+    }
+  };
+})();
+
+module.exports = ProductsRepository;

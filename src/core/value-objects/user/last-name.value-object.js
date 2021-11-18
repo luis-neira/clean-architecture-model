@@ -5,12 +5,12 @@ const { Result } = require('../../lib/result');
 const { ValidationError } = require('../../../common/errors');
 
 module.exports.LastName = class LastName extends ValueObject {
-  get value() {
-    return this.props.value;
-  }
-
   constructor(props) {
     super(props);
+  }
+
+  get value() {
+    return this.props.value;
   }
 
   static create(lastName) {

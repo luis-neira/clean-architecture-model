@@ -1,38 +1,50 @@
 'use strict';
 
-const Router = require('express').Router;
+const { Router } = require('express');
 
-module.exports.ProductsRouter = class ProductsRouter {
-  constructor(controllers) {
-    this.addProductsController = controllers.addProductsController;
-    this.getProductByIdController = controllers.getProductByIdController;
-    this.deleteProductController = controllers.deleteProductController;
-    this.updateProductController = controllers.updateProductController;
-    this.router = Router();
-    this.configRouter();
+const ProductsRouter = (function () {
+  let _addProductController = {};
+  let _deleteProductController = {};
+  let _updateProductController = {};
+  let _getProductByIdController = {};
+  
+  let _router = {};
+
+  class ProductsRouter {
+    constructor(controllers) {
+      _addProductController = controllers.addProductController;
+      _deleteProductController = controllers.deleteProductController;
+      _updateProductController = controllers.updateProductController;
+      _getProductByIdController = controllers.getProductByIdController;
+      _router = Router();
+      configRouter();
+    }
+
+    getRouter() {
+      return _router;
+    }
   }
 
-  configRouter() {
-    const router = this.router;
-    router.post(
+  function configRouter() {
+    _router.post(
       '/api/v1/products',
-      this.addProductsController.getRequestHandler()
+      _addProductController.getRequestHandler()
     );
-    router.get(
+    _router.get(
       '/api/v1/products/:id',
-      this.getProductByIdController.getRequestHandler()
+      _getProductByIdController.getRequestHandler()
     );
-    router.delete(
+    _router.delete(
       '/api/v1/products',
-      this.deleteProductController.getRequestHandler()
+      _deleteProductController.getRequestHandler()
     );
-    router.put(
+    _router.put(
       '/api/v1/products',
-      this.updateProductController.getRequestHandler()
+      _updateProductController.getRequestHandler()
     );
   }
 
-  getRouter() {
-    return this.router;
-  }
-};
+  return ProductsRouter;
+})();
+
+module.exports = { ProductsRouter };

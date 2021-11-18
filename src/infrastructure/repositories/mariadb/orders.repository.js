@@ -3,57 +3,61 @@
 const { sequelize } = require('../../orm/sequelize');
 const { OrderMap } = require('../../../common/mappers');
 
-module.exports = class OrderRepository {
-  constructor() {
-    this._db = sequelize;
-    this.model = this._db.model('Order');
-  }
+const OrdersRepository = (function () {
+  let _db = sequelize;
+  let _model = _db.model('Order');
 
-  async add(order) {
-    const orderRawData = OrderMap.toPersistence(order);
+  return class OrdersRepository {
+    constructor() {}
 
-    const addedOrder = await this.model.create(orderRawData);
+    async add(order) {
+      const orderRawData = OrderMap.toPersistence(order);
 
-    return OrderMap.toDomain(addedOrder.toJSON());
-  }
+      const addedOrder = await _model.create(orderRawData);
 
-  async getById(orderId) {
-    const foundOrder = await this.model.findOne({
-      where: { id: orderId }
-    });
+      return OrderMap.toDomain(addedOrder.toJSON());
+    }
 
-    if (!foundOrder) return null;
+    async getById(orderId) {
+      const foundOrder = await _model.findOne({
+        where: { id: orderId }
+      });
 
-    return OrderMap.toDomain(foundOrder.toJSON());
-  }
+      if (!foundOrder) return null;
 
-  async update(newRawOrderData) {
-    const foundOrder = await this.model.findOne({
-      where: { id: newRawOrderData.id }
-    });
+      return OrderMap.toDomain(foundOrder.toJSON());
+    }
 
-    if (!foundOrder) return null;
+    async update(newRawOrderData) {
+      const foundOrder = await _model.findOne({
+        where: { id: newRawOrderData.id }
+      });
 
-    Reflect.deleteProperty(newRawOrderData, 'id');
+      if (!foundOrder) return null;
 
-    foundOrder.set({
-      ...newRawOrderData
-    });
+      Reflect.deleteProperty(newRawOrderData, 'id');
 
-    await foundOrder.save();
+      foundOrder.set({
+        ...newRawOrderData
+      });
 
-    return OrderMap.toDomain(foundOrder.toJSON());
-  }
+      await foundOrder.save();
 
-  async delete(rawOrderData) {
-    const foundOrder = await this.model.findOne({
-      where: { id: rawOrderData.id }
-    });
+      return OrderMap.toDomain(foundOrder.toJSON());
+    }
 
-    if (!foundOrder) return null;
+    async delete(rawOrderData) {
+      const foundOrder = await _model.findOne({
+        where: { id: rawOrderData.id }
+      });
 
-    await foundOrder.destroy();
+      if (!foundOrder) return null;
 
-    return OrderMap.toDomain(foundOrder.toJSON());
-  }
-};
+      await foundOrder.destroy();
+
+      return OrderMap.toDomain(foundOrder.toJSON());
+    }
+  };
+})();
+
+module.exports = OrdersRepository;

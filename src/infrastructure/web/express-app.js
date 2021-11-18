@@ -7,51 +7,57 @@ const errorHandler = require('./middlewares/error-handler');
 const errorLogger = require('./middlewares/error-logger');
 const notFoundHandler = require('./middlewares/not-found-handler');
 
-module.exports = class ExpressApp {
-  _app;
-  _options;
-  _appInitialized = false;
-  _routers;
+const ExpressApp = (function () {
+  let _app;
+  let _routers;
+  let _options;
+  let _appInitialized = false;
 
-  constructor(routers = [], options = {}) {
-    this._app = express();
-    this._options = options;
-    this._routers = routers;
-  }
+  class ExpressApp {
+    constructor(routers = [], options = {}) {
+      _app = express();
+      _routers = routers;
+      _options = options;
+    }
 
-  build() {
-    this._initApp();
-    return this._app;
-  }
-
-  _initApp() {
-    if (!this._appInitialized) {
-      this._setAppSettings();
-      this._setMiddleWare();
-      this._setAppRouter();
-      this._setErrorHander();
-      this._appInitialized = true;
+    build() {
+      initApp();
+      return _app;
     }
   }
 
-  _setAppSettings() {
-    this._app.use(express.json());
-    this._app.use(express.urlencoded({ extended: true }));
+  function initApp() {
+    if (!_appInitialized) {
+      setAppSettings();
+      setMiddleWare();
+      setAppRouter();
+      setErrorHander();
+      _appInitialized = true;
+    }
   }
 
-  _setMiddleWare() {
-    this._app.use(pinoHttp);
+  function setAppSettings() {
+    _app.use(express.json());
+    _app.use(express.urlencoded({ extended: true }));
   }
 
-  _setAppRouter() {
-    this._routers.forEach((router) => {
-      this._app.use(router.getRouter());
+  function setMiddleWare() {
+    _app.use(pinoHttp);
+  }
+
+  function setAppRouter() {
+    _routers.forEach((router) => {
+      _app.use(router.getRouter());
     });
   }
 
-  _setErrorHander() {
-    this._app.use(notFoundHandler);
-    this._app.use(errorLogger);
-    this._app.use(errorHandler);
+  function setErrorHander() {
+    _app.use(notFoundHandler);
+    _app.use(errorLogger);
+    _app.use(errorHandler);
   }
-};
+
+  return ExpressApp;
+})();
+
+module.exports = ExpressApp;

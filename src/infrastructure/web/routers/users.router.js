@@ -1,38 +1,50 @@
 'use strict';
 
-const Router = require('express').Router;
+const { Router } = require('express');
 
-module.exports.UsersRouter = class UsersRouter {
-  constructor(controllers) {
-    this.addUserController = controllers.addUserController;
-    this.deleteUserController = controllers.deleteUserController;
-    this.updateUserController = controllers.updateUserController;
-    this.getUserByIdController = controllers.getUserByIdController;
-    this.router = Router();
-    this.configRouter();
+const UsersRouter = (function () {
+  let _addUserController = {};
+  let _deleteUserController = {};
+  let _updateUserController = {};
+  let _getUserByIdController = {};
+  
+  let _router = {};
+
+  class UsersRouter {
+    constructor(controllers) {
+      _addUserController = controllers.addUserController;
+      _deleteUserController = controllers.deleteUserController;
+      _updateUserController = controllers.updateUserController;
+      _getUserByIdController = controllers.getUserByIdController;
+      _router = Router();
+      configRouter();
+    }
+
+    getRouter() {
+      return _router;
+    }
   }
 
-  configRouter() {
-    const router = this.router;
-    router.post(
+  function configRouter() {
+    _router.post(
       '/api/v1/users',
-      this.addUserController.getRequestHandler()
+      _addUserController.getRequestHandler()
     );
-    router.delete(
+    _router.delete(
       '/api/v1/users',
-      this.deleteUserController.getRequestHandler()
+      _deleteUserController.getRequestHandler()
     );
-    router.put(
+    _router.put(
       '/api/v1/users',
-      this.updateUserController.getRequestHandler()
+      _updateUserController.getRequestHandler()
     );
-    router.get(
+    _router.get(
       '/api/v1/users/:id',
-      this.getUserByIdController.getRequestHandler()
+      _getUserByIdController.getRequestHandler()
     );
   }
 
-  getRouter() {
-    return this.router;
-  }
-};
+  return UsersRouter;
+})();
+
+module.exports = { UsersRouter };

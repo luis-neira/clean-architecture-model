@@ -1,3 +1,1 @@
-module.exports = {
-  WebAppConfig: require('./web-app.config')
-};
+module.exports = require('./web-app.config');

@@ -1,45 +1,46 @@
 'use strict';
 
-const {
-  AddOrderController,
-  GetOrderByIdController,
-  UpdateOrderController,
-  DeleteOrderController
-} = require('../../../controllers/orders');
+module.exports = class OrdersControllersConfig {
+  constructor() {}
 
-module.exports = class UsersControllersConfig {
-  static getAddOrderController(addOrderUseCase) {
-    return new AddOrderController(addOrderUseCase);
-  }
-
-  static getGetOrderByIdController(getOrderByIdUseCase) {
-    return new GetOrderByIdController(getOrderByIdUseCase);
-  }
-
-  static getUpdateOrderController(updateOrderUseCase) {
-    return new UpdateOrderController(updateOrderUseCase)
-  }
-
-  static getDeleteOrderController(deleteOrderUseCase) {
-    return new DeleteOrderController(deleteOrderUseCase)
-  }
-
-  static getAllControllers(useCases) {
-    const Self = UsersControllersConfig;
-
+  getAllControllers(useCases) {
     return {
-      addOrderController: Self.getAddOrderController(
+      addOrderController: getAddOrderController(
         useCases.addOrderUseCase
       ),
-      getOrderByIdController: Self.getGetOrderByIdController(
+      getOrderByIdController: getGetOrderByIdController(
         useCases.getOrderByIdUseCase
       ),
-      updateOrderController: Self.getUpdateOrderController(
+      updateOrderController: getUpdateOrderController(
         useCases.updateOrderUseCase
       ),
-      deleteOrderController: Self.getDeleteOrderController(
+      deleteOrderController: getDeleteOrderController(
         useCases.deleteOrderUseCase
       )
     };
   }
 };
+
+function getAddOrderController(addOrderUseCase) {
+  const { AddOrderController } = require('../../../controllers/orders');
+
+  return new AddOrderController(addOrderUseCase);
+}
+
+function getGetOrderByIdController(getOrderByIdUseCase) {
+  const { GetOrderByIdController } = require('../../../controllers/orders');
+  
+  return new GetOrderByIdController(getOrderByIdUseCase);
+}
+
+function getUpdateOrderController(updateOrderUseCase) {
+  const { UpdateOrderController } = require('../../../controllers/orders');
+  
+  return new UpdateOrderController(updateOrderUseCase)
+}
+
+function getDeleteOrderController(deleteOrderUseCase) {
+  const { DeleteOrderController } = require('../../../controllers/orders');
+
+  return new DeleteOrderController(deleteOrderUseCase)
+}

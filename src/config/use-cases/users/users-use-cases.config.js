@@ -1,37 +1,38 @@
 'use strict';
 
-const {
-  AddUserUseCase,
-  DeleteUserUseCase,
-  GetUserByIdUseCase,
-  UpdateUserUseCase
-} = require('../../../core/use-cases/users');
-
 module.exports = class UsersUseCasesConfig {
-  static getAddUserUseCase(dbRepository) {
-    return new AddUserUseCase(dbRepository);
-  }
+  constructor() {}
 
-  static getDeleteUserUseCase(dbRepository) {
-    return new DeleteUserUseCase(dbRepository);
-  }
-
-  static getUpdateUserUseCase(dbRepository) {
-    return new UpdateUserUseCase(dbRepository);
-  }
-
-  static getGetUserByIdUseCase(dbRepository) {
-    return new GetUserByIdUseCase(dbRepository);
-  }
-
-  static getAllUseCases(dbRepository) {
-    const Self = UsersUseCasesConfig;
-    
+  getAllUseCases(dbRepository) {
     return {
-      addUserUseCase: Self.getAddUserUseCase(dbRepository),
-      deleteUserUseCase: Self.getDeleteUserUseCase(dbRepository),
-      updateUserUseCase: Self.getUpdateUserUseCase(dbRepository),
-      getUserByIdUseCase: Self.getGetUserByIdUseCase(dbRepository)
+      addUserUseCase: getAddUserUseCase(dbRepository),
+      deleteUserUseCase: getDeleteUserUseCase(dbRepository),
+      updateUserUseCase: getUpdateUserUseCase(dbRepository),
+      getUserByIdUseCase: getGetUserByIdUseCase(dbRepository)
     };
   }
 };
+
+function getAddUserUseCase(dbRepository) {
+  const { AddUserUseCase } = require('../../../core/use-cases/users');
+
+  return new AddUserUseCase(dbRepository);
+}
+
+function getDeleteUserUseCase(dbRepository) {
+  const { DeleteUserUseCase } = require('../../../core/use-cases/users');
+
+  return new DeleteUserUseCase(dbRepository);
+}
+
+function getUpdateUserUseCase(dbRepository) {
+  const { UpdateUserUseCase } = require('../../../core/use-cases/users');
+
+  return new UpdateUserUseCase(dbRepository);
+}
+
+function getGetUserByIdUseCase(dbRepository) {
+  const { GetUserByIdUseCase } = require('../../../core/use-cases/users');
+
+  return new GetUserByIdUseCase(dbRepository);
+}

@@ -3,9 +3,6 @@
 const { v4: uuidv4 } = require('uuid');
 
 module.exports.Entity = class Entity {
-  id;
-  props;
-
   constructor(props, id) {
     this.id = id ? id : uuidv4();
     this.props = props;

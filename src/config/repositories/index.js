@@ -1,3 +1,1 @@
-module.exports = {
-  RepositoriesConfig: require('./repositories.config')
-};
+module.exports = require('./repositories.config');

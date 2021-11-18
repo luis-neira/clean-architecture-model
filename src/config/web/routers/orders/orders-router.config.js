@@ -5,7 +5,9 @@ const {
 } = require('../../../../infrastructure/web/routers/orders.router');
 
 module.exports = class OrdersRouterConfig {
-  static getOrdersRouter(controllers) {
+  constructor() {}
+
+  getRouter(controllers) {
     return new OrdersRouter(controllers);
   }
 };

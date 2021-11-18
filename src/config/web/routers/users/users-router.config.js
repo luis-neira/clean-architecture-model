@@ -5,7 +5,9 @@ const {
 } = require('../../../../infrastructure/web/routers/users.router');
 
 module.exports = class UsersRouterConfig {
-  static getUsersRouter(controllers) {
+  constructor() {}
+
+  getRouter(controllers) {
     return new UsersRouter(controllers);
   }
 };

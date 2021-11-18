@@ -1,26 +1,30 @@
 'use strict';
 
-module.exports = class RepositoriesConfig {
-  static getInMemoryRepos() {
-    const { InMemoryReposConfig } = require('./in-memory');
+const InMemoryReposConfig = require('./in-memory');
+const MariadbReposConfig = require('./mariadb');
+const constants = require('../../config/constants');
 
-    return InMemoryReposConfig.getAllRepos();
+class RepositoriesConfigFactory {
+  constructor() {}
+
+  create(dbDialect) {
+    return selectRepos(dbDialect);
+  }
+}
+
+function selectRepos(dbDialect) {
+  const configsDictionary = {
+    [constants.dbDialects.MARIA_DB]: new MariadbReposConfig(),
+    [constants.dbDialects.IN_MEMORY]: new InMemoryReposConfig()
+  };
+
+  if (dbDialect in configsDictionary) {
+    const reposConfig = configsDictionary[dbDialect];
+    return reposConfig.getAllRepositories();
   }
 
-  static getMariadbRepos() {
-    const { MariadbReposConfig } = require('./mariadb');
+  const inMemoryRepos = new InMemoryReposConfig();
+  return inMemoryRepos.getAllRepositories();
+}
 
-    return MariadbReposConfig.getAllRepos();
-  }
-
-  static selectRepos(dbDialect) {
-    const reposLookup = {
-      inMemory: RepositoriesConfig.getInMemoryRepos,
-      mariadb: RepositoriesConfig.getMariadbRepos
-    };
-
-    const getRepos = reposLookup[dbDialect];
-
-    return getRepos() || RepositoriesConfig.getInMemoryRepos();
-  }
-};
+module.exports = RepositoriesConfigFactory;

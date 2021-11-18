@@ -1,4 +1,2 @@
 
-module.exports = {
-  inMemorydb: require('./in-memory')
-};
+module.exports = require('./in-memory')

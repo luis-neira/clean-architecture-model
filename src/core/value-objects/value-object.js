@@ -3,8 +3,6 @@
 const { shallowEqual } = require('shallow-equal-object');
 
 module.exports.ValueObject = class ValueObject {
-  props;
-
   constructor(props) {
     this.props = Object.freeze(props);
   }

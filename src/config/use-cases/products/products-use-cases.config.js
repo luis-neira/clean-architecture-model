@@ -1,37 +1,38 @@
 'use strict';
 
-const {
-  AddProductUseCase,
-  GetProductByIdUseCase,
-  DeleteProductUseCase,
-  UpdateProductUseCase
-} = require('../../../core/use-cases/products');
-
 module.exports = class ProductsUseCasesConfig {
-  static getAddProductUseCase(dbRepository) {
-    return new AddProductUseCase(dbRepository);
-  }
+  constructor() {}
 
-  static getGetProductByIdUseCase(dbRepository) {
-    return new GetProductByIdUseCase(dbRepository);
-  }
-
-  static getDeleteProductUseCase(dbRepository) {
-    return new DeleteProductUseCase(dbRepository);
-  }
-  
-  static getUpdateProductUseCase(dbRepository) {
-    return new UpdateProductUseCase(dbRepository);
-  }
-
-  static getAllUseCases(dbRepository) {
-    const Self = ProductsUseCasesConfig;
-    
+  getAllUseCases(dbRepository) {
     return {
-      addProductUseCase: Self.getAddProductUseCase(dbRepository),
-      getProductByIdUseCase: Self.getGetProductByIdUseCase(dbRepository),
-      deleteProductUseCase: Self.getDeleteProductUseCase(dbRepository),
-      updateProductUseCase: Self.getUpdateProductUseCase(dbRepository)
+      addProductUseCase: getAddProductUseCase(dbRepository),
+      deleteProductUseCase: getDeleteProductUseCase(dbRepository),
+      updateProductUseCase: getUpdateProductUseCase(dbRepository),
+      getProductByIdUseCase: getGetProductByIdUseCase(dbRepository)
     };
   }
 };
+
+function getAddProductUseCase(dbRepository) {
+  const { AddProductUseCase } = require('../../../core/use-cases/products');
+
+  return new AddProductUseCase(dbRepository);
+}
+
+function getDeleteProductUseCase(dbRepository) {
+  const { DeleteProductUseCase } = require('../../../core/use-cases/products');
+
+  return new DeleteProductUseCase(dbRepository);
+}
+
+function getUpdateProductUseCase(dbRepository) {
+  const { UpdateProductUseCase } = require('../../../core/use-cases/products');
+
+  return new UpdateProductUseCase(dbRepository);
+}
+
+function getGetProductByIdUseCase(dbRepository) {
+  const { GetProductByIdUseCase } = require('../../../core/use-cases/products');
+
+  return new GetProductByIdUseCase(dbRepository);
+}

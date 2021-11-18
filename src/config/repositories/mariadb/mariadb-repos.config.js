@@ -1,17 +1,37 @@
 'use strict';
 
-const {
-  UsersRepository,
-  ProductsRepository,
-  OrdersRepository
-} = require('../../../infrastructure/repositories/mariadb');
-
 module.exports = class MariadbReposConfig {
-  static getAllRepos() {
+  constructor() {}
+
+  getAllRepositories() {
     return {
-      usersRepository: new UsersRepository(),
-      ordersRepository: new OrdersRepository(),
-      productsRepository: new ProductsRepository()
+      usersRepository: getUsersRepository(),
+      productsRepository: getProductsRepository(),
+      ordersRepository: getOrdersRepository()
     };
   }
 };
+
+function getUsersRepository() {
+  const {
+    UsersRepository
+  } = require('../../../infrastructure/repositories/mariadb');
+
+  return new UsersRepository();
+}
+
+function getProductsRepository() {
+  const {
+    ProductsRepository
+  } = require('../../../infrastructure/repositories/mariadb');
+
+  return new ProductsRepository();
+}
+
+function getOrdersRepository() {
+  const {
+    OrdersRepository
+  } = require('../../../infrastructure/repositories/mariadb');
+
+  return new OrdersRepository();
+}

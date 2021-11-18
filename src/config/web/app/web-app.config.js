@@ -2,10 +2,20 @@
 
 const ExpressApp = require('../../../infrastructure/web/express-app');
 
-module.exports = class WebAppConfig {
+const WebAppConfig = (function () {
+  let _routers = [];
+  let _options = {};
 
-  static getExpressApp(routers, options) {
-    return new ExpressApp(routers, options);
-  }
+  return class WebAppConfig {
+    constructor(routers, options) {
+      _routers = routers;
+      _options = options;
+    }
 
-};
+    getExpressApp() {
+      return new ExpressApp(_routers, _options);
+    }
+  };
+})();
+
+module.exports = WebAppConfig;

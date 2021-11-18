@@ -1,45 +1,46 @@
 'use strict';
 
-const {
-  AddProductController,
-  GetProductByIdController,
-  DeleteProductController,
-  UpdateProductController
-} = require('../../../controllers/products');
-
 module.exports = class ProductsControllersConfig {
-  static getAddProductController(addProductUseCase) {
-    return new AddProductController(addProductUseCase);
-  }
+  constructor() {}
 
-  static getGetProductByIdController(getProductByIdUseCase) {
-    return new GetProductByIdController(getProductByIdUseCase);
-  }
-
-  static getDeleteProductController(deleteProductUseCase) {
-    return new DeleteProductController(deleteProductUseCase);
-  }
-
-  static getUpdateProductController(updateProductUseCase) {
-    return new UpdateProductController(updateProductUseCase);
-  }
-
-  static getAllControllers(useCases) {
-    const Self = ProductsControllersConfig;
-
+  getAllControllers(useCases) {
     return {
-      addProductsController: Self.getAddProductController(
+      addProductController: getAddProductController(
         useCases.addProductUseCase
       ),
-      getProductByIdController: Self.getGetProductByIdController(
+      getProductByIdController: getGetProductByIdController(
         useCases.getProductByIdUseCase
       ),
-      deleteProductController: Self.getDeleteProductController(
+      deleteProductController: getDeleteProductController(
         useCases.deleteProductUseCase
       ),
-      updateProductController: Self.getUpdateProductController(
+      updateProductController: getUpdateProductController(
         useCases.updateProductUseCase
       )
     };
   }
 };
+
+function getAddProductController(addProductUseCase) {
+  const { AddProductController } = require('../../../controllers/products');
+
+  return new AddProductController(addProductUseCase);
+}
+
+function getGetProductByIdController(getProductByIdUseCase) {
+  const { GetProductByIdController } = require('../../../controllers/products');
+
+  return new GetProductByIdController(getProductByIdUseCase);
+}
+
+function getDeleteProductController(deleteProductUseCase) {
+  const { DeleteProductController } = require('../../../controllers/products');
+
+  return new DeleteProductController(deleteProductUseCase);
+}
+
+function getUpdateProductController(updateProductUseCase) {
+  const { UpdateProductController } = require('../../../controllers/products');
+
+  return new UpdateProductController(updateProductUseCase);
+}

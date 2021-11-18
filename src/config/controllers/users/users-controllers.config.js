@@ -1,45 +1,46 @@
 'use strict';
 
-const {
-  AddUserController,
-  DeleteUserController,
-  GetUserByIdController,
-  UpdateUserController
-} = require('../../../controllers/users');
-
 module.exports = class UsersControllersConfig {
-  static getAddUserController(addUserUseCase) {
-    return new AddUserController(addUserUseCase);
-  }
+  constructor() {}
 
-  static getUpdateUserController(updateUserUseCase) {
-    return new UpdateUserController(updateUserUseCase);
-  }
-
-  static getDeleteUserController(deleteUserUseCase) {
-    return new DeleteUserController(deleteUserUseCase);
-  }
-
-  static getGetUserByIdController(getUserByIdUseCase) {
-    return new GetUserByIdController(getUserByIdUseCase);
-  }
-
-  static getAllControllers(useCases) {
-    const Self = UsersControllersConfig;
-
+  getAllControllers(useCases) {
     return {
-      addUserController: Self.getAddUserController(
+      addUserController: getAddUserController(
         useCases.addUserUseCase
       ),
-      deleteUserController: Self.getDeleteUserController(
+      deleteUserController: getDeleteUserController(
         useCases.deleteUserUseCase
       ),
-      updateUserController: Self.getUpdateUserController(
+      updateUserController: getUpdateUserController(
         useCases.updateUserUseCase
       ),
-      getUserByIdController: Self.getGetUserByIdController(
+      getUserByIdController: getGetUserByIdController(
         useCases.getUserByIdUseCase
       )
     };
   }
 };
+
+function getAddUserController(addUserUseCase) {
+  const { AddUserController } = require('../../../controllers/users');
+  
+  return new AddUserController(addUserUseCase);
+}
+
+function getDeleteUserController(deleteUserUseCase) {
+  const { DeleteUserController } = require('../../../controllers/users');
+  
+  return new DeleteUserController(deleteUserUseCase);
+}
+
+function getUpdateUserController(updateUserUseCase) {
+  const { UpdateUserController } = require('../../../controllers/users');
+  
+  return new UpdateUserController(updateUserUseCase);
+}
+
+function getGetUserByIdController(getUserByIdUseCase) {
+  const { GetUserByIdController } = require('../../../controllers/users');
+
+  return new GetUserByIdController(getUserByIdUseCase);
+}

@@ -1,17 +1,37 @@
 'use strict';
 
-const {
-  UsersRepository,
-  OrdersRepository,
-  ProductsRepository
-} = require('../../../infrastructure/repositories/in-memory');
-
 module.exports = class InMemoryReposConfig {
-  static getAllRepos() {
+  constructor() {}
+
+  getAllRepositories() {
     return {
-      usersRepository: new UsersRepository(),
-      ordersRepository: new OrdersRepository(),
-      productsRepository: new ProductsRepository()
+      usersRepository: getUsersRepository(),
+      productsRepository: getProductsRepository(),
+      ordersRepository: getOrdersRepository()
     };
   }
 };
+
+function getUsersRepository() {
+  const {
+    UsersRepository
+  } = require('../../../infrastructure/repositories/in-memory');
+
+  return new UsersRepository();
+}
+
+function getProductsRepository() {
+  const {
+    ProductsRepository
+  } = require('../../../infrastructure/repositories/in-memory');
+
+  return new ProductsRepository();
+}
+
+function getOrdersRepository() {
+  const {
+    OrdersRepository
+  } = require('../../../infrastructure/repositories/in-memory');
+
+  return new OrdersRepository();
+}

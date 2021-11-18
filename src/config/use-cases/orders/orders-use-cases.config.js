@@ -1,37 +1,38 @@
 'use strict';
 
-const {
-  AddOrderUseCase,
-  GetOrderByIdUseCase,
-  UpdateOrderUseCase,
-  DeleteOrderUseCase
-} = require('../../../core/use-cases/orders');
-
 module.exports = class OrdersUseCasesConfig {
-  static getAddOrderUseCase(dbRepository) {
-    return new AddOrderUseCase(dbRepository);
-  }
+  constructor() {}
 
-  static getGetOrderByIdUseCase(dbRepository) {
-    return new GetOrderByIdUseCase(dbRepository);
-  }
-
-  static getUpdateOrderUseCase(dbRepository) {
-    return new UpdateOrderUseCase(dbRepository);
-  }
-
-  static getDeleteOrderUseCase(dbRepository) {
-    return new DeleteOrderUseCase(dbRepository);
-  }
-
-  static getAllUseCases(dbRepository) {
-    const Self = OrdersUseCasesConfig;
-
+  getAllUseCases(dbRepository) {
     return {
-      addOrderUseCase: Self.getAddOrderUseCase(dbRepository),
-      getOrderByIdUseCase: Self.getGetOrderByIdUseCase(dbRepository),
-      updateOrderUseCase: Self.getUpdateOrderUseCase(dbRepository),
-      deleteOrderUseCase: Self.getDeleteOrderUseCase(dbRepository)
+      addOrderUseCase: getAddOrderUseCase(dbRepository),
+      getOrderByIdUseCase: getGetOrderByIdUseCase(dbRepository),
+      updateOrderUseCase: getUpdateOrderUseCase(dbRepository),
+      deleteOrderUseCase: getDeleteOrderUseCase(dbRepository)
     };
   }
 };
+
+function getAddOrderUseCase(dbRepository) {
+  const { AddOrderUseCase } = require('../../../core/use-cases/orders');
+
+  return new AddOrderUseCase(dbRepository);
+}
+
+function getGetOrderByIdUseCase(dbRepository) {
+  const { GetOrderByIdUseCase } = require('../../../core/use-cases/orders');
+
+  return new GetOrderByIdUseCase(dbRepository);
+}
+
+function getUpdateOrderUseCase(dbRepository) {
+  const { UpdateOrderUseCase } = require('../../../core/use-cases/orders');
+
+  return new UpdateOrderUseCase(dbRepository);
+}
+
+function getDeleteOrderUseCase(dbRepository) {
+  const { DeleteOrderUseCase } = require('../../../core/use-cases/orders');
+
+  return new DeleteOrderUseCase(dbRepository);
+}

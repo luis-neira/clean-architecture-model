@@ -3,57 +3,61 @@
 const { sequelize } = require('../../orm/sequelize');
 const { UserMap } = require('../../../common/mappers');
 
-module.exports = class UsersRepository {
-  constructor() {
-    this._db = sequelize;
-    this.model = this._db.model('User');
-  }
+const UsersRepository = (function () {
+  let _db = sequelize;
+  let _model = _db.model('User');
 
-  async add(user) {
-    const userRawData = UserMap.toPersistence(user);
+  return class UsersRepository {
+    constructor() {}
 
-    const addedUser = await this.model.create(userRawData);
+    async add(user) {
+      const userRawData = UserMap.toPersistence(user);
 
-    return UserMap.toDomain(addedUser.toJSON());
-  }
+      const addedUser = await _model.create(userRawData);
 
-  async getById(userId) {
-    const foundUser = await this.model.findOne({
-      where: { id: userId }
-    });
+      return UserMap.toDomain(addedUser.toJSON());
+    }
 
-    if (!foundUser) return null;
+    async getById(userId) {
+      const foundUser = await _model.findOne({
+        where: { id: userId }
+      });
 
-    return UserMap.toDomain(foundUser.toJSON());
-  }
+      if (!foundUser) return null;
 
-  async update(newRawUserData) {
-    const foundUser = await this.model.findOne({
-      where: { id: newRawUserData.id }
-    });
+      return UserMap.toDomain(foundUser.toJSON());
+    }
 
-    if (!foundUser) return null;
+    async update(newRawUserData) {
+      const foundUser = await _model.findOne({
+        where: { id: newRawUserData.id }
+      });
 
-    Reflect.deleteProperty(newRawUserData, 'id');
+      if (!foundUser) return null;
 
-    foundUser.set({
-      ...newRawUserData
-    });
+      Reflect.deleteProperty(newRawUserData, 'id');
 
-    await foundUser.save();
+      foundUser.set({
+        ...newRawUserData
+      });
 
-    return UserMap.toDomain(foundUser.toJSON());
-  }
+      await foundUser.save();
 
-  async delete(rawUserData) {
-    const foundUser = await this.model.findOne({
-      where: { id: rawUserData.id }
-    });
+      return UserMap.toDomain(foundUser.toJSON());
+    }
 
-    if (!foundUser) return null;
+    async delete(rawUserData) {
+      const foundUser = await _model.findOne({
+        where: { id: rawUserData.id }
+      });
 
-    await foundUser.destroy();
+      if (!foundUser) return null;
 
-    return UserMap.toDomain(foundUser.toJSON());
-  }
-};
+      await foundUser.destroy();
+
+      return UserMap.toDomain(foundUser.toJSON());
+    }
+  };
+})();
+
+module.exports = UsersRepository;
