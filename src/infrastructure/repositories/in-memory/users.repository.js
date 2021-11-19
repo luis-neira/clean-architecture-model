@@ -6,13 +6,15 @@ const inMemorydb = require('../../orm/in-memory');
 const { UserMap } = require('../../../common/mappers');
 
 const UsersRepository = (function () {
-  let _db = inMemorydb;
+  let _db = new WeakMap();
 
-  return class UsersRepository {
-    constructor() {}
+  class UsersRepository {
+    constructor() {
+      _db.set(this, inMemorydb);
+    }
 
     async add(user) {
-      const { users } = _db;
+      const { users } = _db.get(this);
       if (!user.id) user.id = uuidv4();
 
       users.push(UserMap.toPersistence(user));
@@ -21,7 +23,7 @@ const UsersRepository = (function () {
     }
 
     async update(user) {
-      const { users } = _db;
+      const { users } = _db.get(this);
       const userIndex = users.findIndex((u) => u.id === user.id);
       if (userIndex < 0) return null;
 
@@ -30,7 +32,7 @@ const UsersRepository = (function () {
     }
 
     async delete(user) {
-      const { users } = _db;
+      const { users } = _db.get(this);
       const userIndex = users.findIndex((u) => u.id === user.id);
       if (userIndex < 0) return null;
 
@@ -39,13 +41,15 @@ const UsersRepository = (function () {
     }
 
     async getById(id) {
-      const { users } = _db;
+      const { users } = _db.get(this);
       const persistedUser = users.find((u) => u.id === id);
       if (!persistedUser) return null;
 
       return UserMap.toDomain(persistedUser);
     }
-  };
+  }
+
+  return UsersRepository;
 })();
 
 module.exports = UsersRepository;

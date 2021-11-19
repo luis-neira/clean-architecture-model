@@ -3,7 +3,7 @@
 const _Abstract_DbClient = require('../interfaces/db-client.abstract');
 
 const InMemoryClient = (function () {
-  let dialect = '';
+  let _dialect = new WeakMap();
 
   return class InMemoryClient extends _Abstract_DbClient {
     constructor() {
@@ -11,7 +11,7 @@ const InMemoryClient = (function () {
       Object.freeze(this);
     }
     static setDialect(dbDialect) {
-      dialect = dbDialect;
+      _dialect.set(this, dbDialect);
     }
     async connect() {
       return null;
@@ -20,7 +20,7 @@ const InMemoryClient = (function () {
       return null;
     }
     getDialect() {
-      return dialect;
+      return _dialect.get(this.constructor);
     }
     getConnection() {
       return null;

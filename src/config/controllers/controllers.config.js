@@ -5,11 +5,19 @@ const ProductsControllersConfig = require('./products');
 const OrdersControllersConfig = require('./orders');
 
 const ControllersConfig = (function () {
-  let _useCases = {};
+  let _makeControllersDictionary = new WeakMap();
 
   class ControllersConfig {
     constructor(useCases) {
-      _useCases = useCases;
+      
+      _makeControllersDictionary.set(this, (configsDictionary) => {
+        const configs = Object.entries(configsDictionary);
+
+        return configs.reduce((accum, [key, config]) => {
+          accum[key] = config.getAllControllers(useCases[key]);
+          return accum;
+        }, {});
+      });
     }
 
     getControllers() {
@@ -19,17 +27,9 @@ const ControllersConfig = (function () {
         orders: new OrdersControllersConfig()
       };
 
+      const makeControllersDictionary = _makeControllersDictionary.get(this);
       return makeControllersDictionary(configsDictionary);
     }
-  }
-
-  function makeControllersDictionary(configsDictionary) {
-    const configs = Object.entries(configsDictionary);
-
-    return configs.reduce((accum, [key, config]) => {
-      accum[key] = config.getAllControllers(_useCases[key]);
-      return accum;
-    }, {});
   }
 
   return ControllersConfig;

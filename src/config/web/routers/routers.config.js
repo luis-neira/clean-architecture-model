@@ -5,11 +5,19 @@ const ProductsRouterConfig = require('./products');
 const OrdersRouterConfig = require('./orders');
 
 const RoutersConfig = (function () {
-  let _controllersDictionary = {};
+  let _makeRoutersList = new WeakMap();
 
   class RoutersConfig {
     constructor(controllersDictionary) {
-      _controllersDictionary = controllersDictionary;
+
+      _makeRoutersList.set(this, (configsDictionary) => {
+        const configs = Object.entries(configsDictionary);
+
+        return configs.reduce((accum, [key, config]) => {
+          accum.push(config.getRouter(controllersDictionary[key]));
+          return accum;
+        }, []);
+      });
     }
 
     getRouters() {
@@ -19,17 +27,9 @@ const RoutersConfig = (function () {
         orders: new OrdersRouterConfig()
       };
 
+      const makeRoutersList = _makeRoutersList.get(this);
       return makeRoutersList(configsDictionary);
     }
-  }
-
-  function makeRoutersList(configsDictionary) {
-    const configs = Object.entries(configsDictionary);
-
-    return configs.reduce((accum, [key, config]) => {
-      accum.push(config.getRouter(_controllersDictionary[key]));
-      return accum;
-    }, []);
   }
 
   return RoutersConfig;

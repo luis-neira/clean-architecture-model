@@ -1,8 +1,6 @@
 'use strict';
 
 module.exports.Left = class Left {
-  value;
-
   constructor(value) {
     this.value = value;
   }
@@ -17,8 +15,6 @@ module.exports.Left = class Left {
 };
 
 module.exports.Right = class Right {
-  value;
-
   constructor(value) {
     this.value = value;
   }

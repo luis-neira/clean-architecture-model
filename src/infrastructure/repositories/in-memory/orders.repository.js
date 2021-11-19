@@ -6,13 +6,15 @@ const inMemorydb = require('../../orm/in-memory');
 const { OrderMap } = require('../../../common/mappers');
 
 const OrdersRepository = (function () {
-  let _db = inMemorydb;
+  let _db = new WeakMap();
 
-  return class OrdersRepository {
-    constructor() {}
+  class OrdersRepository {
+    constructor() {
+      _db.set(this, inMemorydb);
+    }
 
     async add(order) {
-      const { orders } = _db;
+      const { orders } = _db.get(this);
       if (!order.id) order.id = uuidv4();
 
       orders.push(OrderMap.toPersistence(order));
@@ -21,7 +23,7 @@ const OrdersRepository = (function () {
     }
 
     async update(order) {
-      const { orders } = _db;
+      const { orders } = _db.get(this);
       const orderIndex = orders.findIndex((u) => u.id === order.id);
       if (orderIndex < 0) return null;
 
@@ -31,7 +33,7 @@ const OrdersRepository = (function () {
     }
 
     async delete(order) {
-      const { orders } = _db;
+      const { orders } = _db.get(this);
       const orderIndex = orders.findIndex((u) => u.id === order.id);
       if (orderIndex < 0) return null;
 
@@ -41,13 +43,15 @@ const OrdersRepository = (function () {
     }
 
     async getById(id) {
-      const { orders } = _db;
+      const { orders } = _db.get(this);
       const persistedOrder = orders.find((u) => u.id === id);
       if (!persistedOrder) return null;
 
       return OrderMap.toDomain(persistedOrder);
     }
-  };
+  }
+
+  return OrdersRepository;
 })();
 
 module.exports = OrdersRepository;

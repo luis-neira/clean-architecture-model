@@ -3,19 +3,24 @@
 const ExpressApp = require('../../../infrastructure/web/express-app');
 
 const WebAppConfig = (function () {
-  let _routers = [];
-  let _options = {};
+  let _routers = new WeakMap();
+  let _options = new WeakMap();
 
-  return class WebAppConfig {
+  class WebAppConfig {
     constructor(routers, options) {
-      _routers = routers;
-      _options = options;
+      _routers.set(this, routers);
+      _options.set(this, options);
     }
 
     getExpressApp() {
-      return new ExpressApp(_routers, _options);
+      const routers = _routers.get(this);
+      const options = _options.get(this);
+
+      return new ExpressApp(routers, options);
     }
-  };
+  }
+
+  return WebAppConfig;
 })();
 
 module.exports = WebAppConfig;

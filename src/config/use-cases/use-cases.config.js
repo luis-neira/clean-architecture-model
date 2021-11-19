@@ -5,11 +5,19 @@ const ProductsUseCasesConfig = require('./products');
 const OrdersUseCasesConfig = require('./orders');
 
 const UseCasesConfig = (function () {
-  let _repos = {};
+  let _makeUseCasesDictionary = new WeakMap();
 
   class UseCasesConfig {
     constructor(repos) {
-      _repos = repos;
+
+      _makeUseCasesDictionary.set(this, (configsDictionary) => {
+        const configs = Object.entries(configsDictionary);
+
+        return configs.reduce((accum, [key, config]) => {
+          accum[key] = config.getAllUseCases(repos);
+          return accum;
+        }, {});
+      });
     }
 
     getUseCases() {
@@ -19,17 +27,9 @@ const UseCasesConfig = (function () {
         orders: new OrdersUseCasesConfig()
       };
 
+      const makeUseCasesDictionary = _makeUseCasesDictionary.get(this);
       return makeUseCasesDictionary(configsDictionary);
     }
-  }
-
-  function makeUseCasesDictionary(configsDictionary) {
-    const configs = Object.entries(configsDictionary);
-
-    return configs.reduce((accum, [key, config]) => {
-      accum[key] = config.getAllUseCases(_repos);
-      return accum;
-    }, {});
   }
 
   return UseCasesConfig;

@@ -3,45 +3,35 @@
 const { Router } = require('express');
 
 const OrdersRouter = (function () {
-  let _addOrderController = {};
-  let _deleteOrderController = {};
-  let _updateOrderController = {};
-  let _getOrderByIdController = {};
-  
-  let _router = {};
+  let _router = new WeakMap();
 
   class OrdersRouter {
     constructor(controllers) {
-      _addOrderController = controllers.addOrderController;
-      _deleteOrderController = controllers.deleteOrderController;
-      _updateOrderController = controllers.updateOrderController;
-      _getOrderByIdController = controllers.getOrderByIdController;
-      _router = Router();
-      configRouter();
+      const router = Router();
+
+      router.post(
+        '/api/v1/orders',
+        controllers.addOrderController.getRequestHandler()
+      );
+      router.get(
+        '/api/v1/orders/:id',
+        controllers.getOrderByIdController.getRequestHandler()
+      );
+      router.delete(
+        '/api/v1/orders/',
+        controllers.deleteOrderController.getRequestHandler()
+      );
+      router.put(
+        '/api/v1/orders/',
+        controllers.updateOrderController.getRequestHandler()
+      );
+
+      _router.set(this, router);
     }
 
     getRouter() {
-      return _router;
+      return _router.get(this);
     }
-  }
-
-  function configRouter() {
-    _router.post(
-      '/api/v1/orders',
-      _addOrderController.getRequestHandler()
-    );
-    _router.get(
-      '/api/v1/orders/:id',
-      _getOrderByIdController.getRequestHandler()
-    );
-    _router.put(
-      '/api/v1/orders/',
-      _updateOrderController.getRequestHandler()
-    );
-    _router.delete(
-      '/api/v1/orders/',
-      _deleteOrderController.getRequestHandler()
-    );
   }
 
   return OrdersRouter;

@@ -1,14 +1,21 @@
 'use strict';
 
-function makeSingelton(ConcreteClass) {
-  let instance = null;
+class SingeltonFactory {
+  constructor() {}
 
-  return {
-    getInstance() {
-      if (instance) return instance;
-      return new ConcreteClass();
-    }
-  };
+  create(ConcreteClass) {
+    let instance = new WeakMap();
+
+    function Singelton() {}
+
+    Singelton.prototype.getInstance = () => {
+      if (instance.has(this)) return instance.get(this);
+      instance.set(this, new ConcreteClass());
+      return instance.get(this);
+    };
+
+    return new Singelton();
+  }
 }
 
-module.exports = { makeSingelton };
+module.exports = SingeltonFactory;

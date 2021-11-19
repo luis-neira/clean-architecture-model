@@ -4,22 +4,25 @@ const { sequelize } = require('../../orm/sequelize');
 const { OrderMap } = require('../../../common/mappers');
 
 const OrdersRepository = (function () {
-  let _db = sequelize;
-  let _model = _db.model('Order');
+  let _model = new WeakMap();
 
-  return class OrdersRepository {
-    constructor() {}
+  class OrdersRepository {
+    constructor() {
+      _model.set(this, sequelize.model('Order'));
+    }
 
     async add(order) {
       const orderRawData = OrderMap.toPersistence(order);
 
-      const addedOrder = await _model.create(orderRawData);
+      const model = _model.get(this);
+      const addedOrder = await model.create(orderRawData);
 
       return OrderMap.toDomain(addedOrder.toJSON());
     }
 
     async getById(orderId) {
-      const foundOrder = await _model.findOne({
+      const model = _model.get(this);
+      const foundOrder = await model.findOne({
         where: { id: orderId }
       });
 
@@ -29,7 +32,8 @@ const OrdersRepository = (function () {
     }
 
     async update(newRawOrderData) {
-      const foundOrder = await _model.findOne({
+      const model = _model.get(this);
+      const foundOrder = await model.findOne({
         where: { id: newRawOrderData.id }
       });
 
@@ -47,7 +51,8 @@ const OrdersRepository = (function () {
     }
 
     async delete(rawOrderData) {
-      const foundOrder = await _model.findOne({
+      const model = _model.get(this);
+      const foundOrder = await model.findOne({
         where: { id: rawOrderData.id }
       });
 
@@ -57,7 +62,9 @@ const OrdersRepository = (function () {
 
       return OrderMap.toDomain(foundOrder.toJSON());
     }
-  };
+  }
+
+  return OrdersRepository;
 })();
 
 module.exports = OrdersRepository;

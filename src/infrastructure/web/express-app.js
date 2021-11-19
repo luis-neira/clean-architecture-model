@@ -8,53 +8,78 @@ const errorLogger = require('./middlewares/error-logger');
 const notFoundHandler = require('./middlewares/not-found-handler');
 
 const ExpressApp = (function () {
-  let _app;
-  let _routers;
-  let _options;
-  let _appInitialized = false;
+  //** private props */
+  let _app = new WeakMap();
+  let _routers = new WeakMap();
+  let _options = new WeakMap();
+  let _appInitialized = new WeakMap();
+
+  //** private methods */
+  let _initApp = new WeakMap();
+  let _setAppSettings = new WeakMap();
+  let _setMiddleWare = new WeakMap();
+  let _setAppRouter = new WeakMap();
+  let _setErrorHander = new WeakMap();
 
   class ExpressApp {
     constructor(routers = [], options = {}) {
-      _app = express();
-      _routers = routers;
-      _options = options;
+      _app.set(this, express());
+      _routers.set(this, routers);
+      _options.set(this, options);
+
+      _initApp.set(this, () => {
+        if (_appInitialized.has(this) === false) {
+          const setAppSettings = _setAppSettings.get(this);
+          const setMiddleWare = _setMiddleWare.get(this);
+          const setAppRouter = _setAppRouter.get(this);
+          const setErrorHander = _setErrorHander.get(this);
+
+          setAppSettings();
+          setMiddleWare();
+          setAppRouter();
+          setErrorHander();
+
+          _appInitialized.set(this, true);
+        }
+      });
+
+      _setAppSettings.set(this, () => {
+        const app = _app.get(this);
+
+        app.use(express.json());
+        app.use(express.urlencoded({ extended: true }));
+      });
+
+      _setMiddleWare.set(this, () => {
+        const app = _app.get(this);
+
+        app.use(pinoHttp);
+      });
+
+      _setAppRouter.set(this, () => {
+        const app = _app.get(this);
+        const routers = _routers.get(this);
+
+        routers.forEach((router) => {
+          app.use(router.getRouter());
+        });
+      });
+
+      _setErrorHander.set(this, () => {
+        const app = _app.get(this);
+
+        app.use(notFoundHandler);
+        app.use(errorLogger);
+        app.use(errorHandler);
+      });
     }
 
     build() {
+      const initApp = _initApp.get(this);
       initApp();
-      return _app;
+
+      return _app.get(this);
     }
-  }
-
-  function initApp() {
-    if (!_appInitialized) {
-      setAppSettings();
-      setMiddleWare();
-      setAppRouter();
-      setErrorHander();
-      _appInitialized = true;
-    }
-  }
-
-  function setAppSettings() {
-    _app.use(express.json());
-    _app.use(express.urlencoded({ extended: true }));
-  }
-
-  function setMiddleWare() {
-    _app.use(pinoHttp);
-  }
-
-  function setAppRouter() {
-    _routers.forEach((router) => {
-      _app.use(router.getRouter());
-    });
-  }
-
-  function setErrorHander() {
-    _app.use(notFoundHandler);
-    _app.use(errorLogger);
-    _app.use(errorHandler);
   }
 
   return ExpressApp;

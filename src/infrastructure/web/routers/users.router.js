@@ -3,45 +3,35 @@
 const { Router } = require('express');
 
 const UsersRouter = (function () {
-  let _addUserController = {};
-  let _deleteUserController = {};
-  let _updateUserController = {};
-  let _getUserByIdController = {};
-  
-  let _router = {};
+  let _router = new WeakMap();
 
   class UsersRouter {
     constructor(controllers) {
-      _addUserController = controllers.addUserController;
-      _deleteUserController = controllers.deleteUserController;
-      _updateUserController = controllers.updateUserController;
-      _getUserByIdController = controllers.getUserByIdController;
-      _router = Router();
-      configRouter();
+      const router = Router();
+
+      router.post(
+        '/api/v1/users',
+        controllers.addUserController.getRequestHandler()
+      );
+      router.delete(
+        '/api/v1/users',
+        controllers.deleteUserController.getRequestHandler()
+      );
+      router.put(
+        '/api/v1/users',
+        controllers.updateUserController.getRequestHandler()
+      );
+      router.get(
+        '/api/v1/users/:id',
+        controllers.getUserByIdController.getRequestHandler()
+      );
+
+      _router.set(this, router);
     }
 
     getRouter() {
-      return _router;
+      return _router.get(this);
     }
-  }
-
-  function configRouter() {
-    _router.post(
-      '/api/v1/users',
-      _addUserController.getRequestHandler()
-    );
-    _router.delete(
-      '/api/v1/users',
-      _deleteUserController.getRequestHandler()
-    );
-    _router.put(
-      '/api/v1/users',
-      _updateUserController.getRequestHandler()
-    );
-    _router.get(
-      '/api/v1/users/:id',
-      _getUserByIdController.getRequestHandler()
-    );
   }
 
   return UsersRouter;

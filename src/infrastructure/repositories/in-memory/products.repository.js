@@ -6,13 +6,15 @@ const inMemorydb = require('../../orm/in-memory');
 const { ProductMap } = require('../../../common/mappers');
 
 const ProductsRepository = (function () {
-  let _db = inMemorydb;
+  let _db = new WeakMap();
 
-  return class ProductsRepository {
-    constructor() {}
+  class ProductsRepository {
+    constructor() {
+      _db.set(this, inMemorydb);
+    }
 
     async add(product) {
-      const { products } = _db;
+      const { products } = _db.get(this);
       if (!product.id) product.id = uuidv4();
 
       products.push(ProductMap.toPersistence(product));
@@ -21,7 +23,7 @@ const ProductsRepository = (function () {
     }
 
     async update(product) {
-      const { products } = _db;
+      const { products } = _db.get(this);
       const productIndex = products.findIndex((u) => u.id === product.id);
       if (productIndex < 0) return null;
 
@@ -30,7 +32,7 @@ const ProductsRepository = (function () {
     }
 
     async delete(product) {
-      const { products } = _db;
+      const { products } = _db.get(this);
       const productIndex = products.findIndex((u) => u.id === product.id);
       if (productIndex < 0) return null;
 
@@ -39,13 +41,15 @@ const ProductsRepository = (function () {
     }
 
     async getById(id) {
-      const { products } = _db;
+      const { products } = _db.get(this);
       const persistedUser = products.find((u) => u.id === id);
       if (!persistedUser) return null;
 
       return ProductMap.toDomain(persistedUser);
     }
   };
+
+  return ProductsRepository;
 })();
 
 module.exports = ProductsRepository;

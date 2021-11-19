@@ -1,8 +1,8 @@
 'use strict';
 
 const Result = (function () {
-  let _error = null;
-  let _value = null;
+  let _value = new WeakMap();
+  let _error = new WeakMap();
 
   class Result {
     constructor(isSuccess, error, value) {
@@ -20,22 +20,22 @@ const Result = (function () {
 
       this.isSuccess = isSuccess;
       this.isFailure = !isSuccess;
-      _error = error;
-      _value = value;
+      _value.set(this, value);
+      _error.set(this, error);
 
       Object.freeze(this);
     }
 
     getValue() {
       if (!this.isSuccess) {
-        return _error;
+        return _error.get(this);
       }
-      return _value;
+      return _value.get(this);
     }
 
     getError() {
       if (this.isFailure) {
-        return _error;
+        return _error.get(this);
       }
       return undefined;
     }

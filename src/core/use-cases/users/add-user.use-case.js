@@ -32,7 +32,6 @@ module.exports = class AddUserUseCase {
     });
 
     try {
-      console.log(user)
       const addedUser = await this.usersRepository.add(user);
 
       return Result.ok(addedUser);

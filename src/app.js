@@ -7,17 +7,19 @@ const RoutersConfig = require('./config/web/routers');
 const WebAppConfig = require('./config/web/app');
 
 const App = (function () {
-  let _dbDialect;
+  let _dbDialect = new WeakMap();
 
   class App {
     constructor(dbDialect) {
-      _dbDialect = dbDialect;
+      _dbDialect.set(this, dbDialect);
       Object.freeze(this);
     }
 
     init() {
+      const dbDialect = _dbDialect.get(this);
+
       const repositoriesConfigFactory = new RepositoriesConfigFactory();
-      const reposDictionary = repositoriesConfigFactory.create(_dbDialect);
+      const reposDictionary = repositoriesConfigFactory.create(dbDialect);
 
       const useCasesConfig = new UseCasesConfig(reposDictionary);
       const useCasesDictionary = useCasesConfig.getUseCases();

@@ -4,22 +4,25 @@ const { sequelize } = require('../../orm/sequelize');
 const { ProductMap } = require('../../../common/mappers');
 
 const ProductsRepository = (function () {
-  let _db = sequelize;
-  let _model = _db.model('Product');
+  let _model = new WeakMap();
 
-  return class ProductsRepository {
-    constructor() {}
+  class ProductsRepository {
+    constructor() {
+      _model.set(this, sequelize.model('Product'));
+    }
 
     async add(product) {
       const productRawData = ProductMap.toPersistence(product);
 
-      const addedProduct = await _model.create(productRawData);
+      const model = _model.get(this);
+      const addedProduct = await model.create(productRawData);
 
       return ProductMap.toDomain(addedProduct.toJSON());
     }
 
     async getById(productId) {
-      const foundProduct = await _model.findOne({
+      const model = _model.get(this);
+      const foundProduct = await model.findOne({
         where: { id: productId }
       });
 
@@ -29,7 +32,8 @@ const ProductsRepository = (function () {
     }
 
     async update(newRawProductData) {
-      const foundProduct = await _model.findOne({
+      const model = _model.get(this);
+      const foundProduct = await model.findOne({
         where: { id: newRawProductData.id }
       });
 
@@ -47,7 +51,8 @@ const ProductsRepository = (function () {
     }
 
     async delete(rawProductData) {
-      const foundProduct = await _model.findOne({
+      const model = _model.get(this);
+      const foundProduct = await model.findOne({
         where: { id: rawProductData.id }
       });
 
@@ -57,7 +62,9 @@ const ProductsRepository = (function () {
 
       return ProductMap.toDomain(foundProduct.toJSON());
     }
-  };
+  }
+
+  return ProductsRepository;
 })();
 
 module.exports = ProductsRepository;

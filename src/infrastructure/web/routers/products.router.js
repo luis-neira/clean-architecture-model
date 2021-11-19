@@ -3,45 +3,35 @@
 const { Router } = require('express');
 
 const ProductsRouter = (function () {
-  let _addProductController = {};
-  let _deleteProductController = {};
-  let _updateProductController = {};
-  let _getProductByIdController = {};
-  
-  let _router = {};
+  let _router = new WeakMap();
 
   class ProductsRouter {
     constructor(controllers) {
-      _addProductController = controllers.addProductController;
-      _deleteProductController = controllers.deleteProductController;
-      _updateProductController = controllers.updateProductController;
-      _getProductByIdController = controllers.getProductByIdController;
-      _router = Router();
-      configRouter();
+      const router = Router();
+
+      router.post(
+        '/api/v1/products',
+        controllers.addProductController.getRequestHandler()
+      );
+      router.get(
+        '/api/v1/products/:id',
+        controllers.getProductByIdController.getRequestHandler()
+      );
+      router.delete(
+        '/api/v1/products',
+        controllers.deleteProductController.getRequestHandler()
+      );
+      router.put(
+        '/api/v1/products',
+        controllers.updateProductController.getRequestHandler()
+      );
+
+      _router.set(this, router);
     }
 
     getRouter() {
-      return _router;
+      return _router.get(this);
     }
-  }
-
-  function configRouter() {
-    _router.post(
-      '/api/v1/products',
-      _addProductController.getRequestHandler()
-    );
-    _router.get(
-      '/api/v1/products/:id',
-      _getProductByIdController.getRequestHandler()
-    );
-    _router.delete(
-      '/api/v1/products',
-      _deleteProductController.getRequestHandler()
-    );
-    _router.put(
-      '/api/v1/products',
-      _updateProductController.getRequestHandler()
-    );
   }
 
   return ProductsRouter;

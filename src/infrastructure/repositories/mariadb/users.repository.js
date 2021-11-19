@@ -4,22 +4,25 @@ const { sequelize } = require('../../orm/sequelize');
 const { UserMap } = require('../../../common/mappers');
 
 const UsersRepository = (function () {
-  let _db = sequelize;
-  let _model = _db.model('User');
+  let _model = new WeakMap();
 
-  return class UsersRepository {
-    constructor() {}
+  class UsersRepository {
+    constructor() {
+      _model.set(this, sequelize.model('User'));
+    }
 
     async add(user) {
       const userRawData = UserMap.toPersistence(user);
 
-      const addedUser = await _model.create(userRawData);
+      const model = _model.get(this);
+      const addedUser = await model.create(userRawData);
 
       return UserMap.toDomain(addedUser.toJSON());
     }
 
     async getById(userId) {
-      const foundUser = await _model.findOne({
+      const model = _model.get(this);
+      const foundUser = await model.findOne({
         where: { id: userId }
       });
 
@@ -29,7 +32,8 @@ const UsersRepository = (function () {
     }
 
     async update(newRawUserData) {
-      const foundUser = await _model.findOne({
+      const model = _model.get(this);
+      const foundUser = await model.findOne({
         where: { id: newRawUserData.id }
       });
 
@@ -47,7 +51,8 @@ const UsersRepository = (function () {
     }
 
     async delete(rawUserData) {
-      const foundUser = await _model.findOne({
+      const model = _model.get(this);
+      const foundUser = await model.findOne({
         where: { id: rawUserData.id }
       });
 
@@ -57,7 +62,9 @@ const UsersRepository = (function () {
 
       return UserMap.toDomain(foundUser.toJSON());
     }
-  };
+  }
+
+  return UsersRepository;
 })();
 
 module.exports = UsersRepository;

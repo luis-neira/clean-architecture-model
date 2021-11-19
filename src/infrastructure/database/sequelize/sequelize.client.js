@@ -4,17 +4,17 @@ const logger = require('../../../common/logger');
 const _Abstract_DbClient = require('../interfaces/db-client.abstract');
 
 const SequelizeClient = (function () {
-  let connection = null;
-  let dialect = '';
+  let _dialect = new WeakMap();
+  let _connection = new WeakMap();
 
-  return class SequelizeClient extends _Abstract_DbClient {
+  class SequelizeClient extends _Abstract_DbClient {
     constructor() {
       super();
       Object.freeze(this);
     }
 
     static setDialect(dbDialect) {
-      dialect = dbDialect;
+      _dialect.set(this, dbDialect);
     }
 
     async connect() {
@@ -25,35 +25,40 @@ const SequelizeClient = (function () {
 
         logger.info('Database connection: Successfully established');
 
-        connection = sequelize;
+        _connection.set(this, sequelize);
       } catch (err) {
         logger.error({ err }, 'Unable to connect to the database');
+        return;
       }
 
       try {
+        const connection = _connection.get(this);
         await connection.sync();
         logger.info('Database synchronization: Successful');
       } catch (err) {
         logger.error({ err }, 'Unable to synchronize with database');
 
-        connection = null;
+        _connection.delete(this);
       }
     }
 
     async close() {
-      if (connection === null) return null;
+      if (_connection.has(this) === false) return null;
+      const connection = _connection.get(this);
       await connection.close();
       logger.info('Database connection: Successfully closed');
     }
 
     getConnection() {
-      return connection;
+      return _connection.get(this);
     }
 
     getDialect() {
-      return dialect;
+      return _dialect.get(this.constructor);
     }
-  };
+  }
+
+  return SequelizeClient;
 })();
 
 module.exports = SequelizeClient;
