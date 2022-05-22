@@ -1,9 +1,9 @@
-# Clean Architecture Model JS
+# Node.js Clean Architecture API
 
 version: 'v1.0.0'
 
 ## Description
-This is my attempt to implement Uncle Bob Martin's clean architecture in JavaScript. However, according to Bob Martin's clean architechture diagram, both the use case outport/input ports are implemented with interfaces, which do not exist in JavaScript. Therefore, I try to satify this need with dependency injection.
+This is my attempt to implement Uncle Bob Martin's clean architecture in JavaScript. However, according to Bob Martin's clean architecture diagram, both the use case output/input ports are implemented with interfaces, which do not exist in JavaScript. Therefore, I try to satisfy this need with dependency injection.
 
 *Note: This version does NOT follows proper RESTful architecture.*
 
@@ -11,7 +11,7 @@ This is my attempt to implement Uncle Bob Martin's clean architecture in JavaScr
 * Database Repositories
     * In-memory
     * Sequelize
-        * Mariadb 
+        * MariaDB
 * External Services
     * jsonplaceholder (example)
 
@@ -70,8 +70,7 @@ These are the routes this API uses:
 
 #### Prerequisites
 * Node.js
-* Sequelize
-* Mariadb
+* MariaDB
 
 
 #### 1. Clone the repo and install dependencies
